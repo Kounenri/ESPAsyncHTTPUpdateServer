@@ -1,0 +1,21 @@
+#######################################
+# Syntax Coloring Map For ESP8266HTTPUpdateServer
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+ESP8266HTTPUpdateServer	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+setup	KEYWORD2
+updateCredentials	KEYWORD2
+handleReboot	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
