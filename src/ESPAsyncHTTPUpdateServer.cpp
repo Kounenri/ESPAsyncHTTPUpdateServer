@@ -8,6 +8,9 @@
 #include "StreamString.h"
 #include "ESPAsyncHTTPUpdateServer.h"
 
+static const char successResponse[] PROGMEM =
+	"<META http-equiv=\"refresh\" content=\"15;URL=/\">Update Success! Rebooting...";
+
 void AsyncHTTPUpdateServer::_setUpdaterError()
 {
 	if (_serial_output)
@@ -65,7 +68,7 @@ void AsyncHTTPUpdateServer::setup(AsyncWebServer *server, const String &path, co
 			else
 			{
 				request->client()->setNoDelay(true);
-				request->send(LittleFS, F("/update_success.html"), String());
+				request->send_P(200, PSTR("text/html"), successResponse);
 				request->client()->stop();
 
 				_shouldreboot = true;
