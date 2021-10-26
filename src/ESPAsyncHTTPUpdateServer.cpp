@@ -4,31 +4,9 @@
 #include <WiFiUdp.h>
 #include <flash_hal.h>
 #include <FS.h>
+#include <LittleFS.h>
 #include "StreamString.h"
 #include "ESPAsyncHTTPUpdateServer.h"
-
-static const char serverIndex[] PROGMEM =
-	R"(<!DOCTYPE html>
-	<html lang='en'>
-	<head>
-		<meta charset='utf-8'>
-		<meta name='viewport' content='width=device-width,initial-scale=1'/>
-	</head>
-	<body>
-		<form method='POST' action='' enctype='multipart/form-data'>
-			Firmware:<br>
-			<input type='file' accept='.bin,.bin.gz' name='firmware'>
-			<input type='submit' value='Update Firmware'>
-		</form>
-		<form method='POST' action='' enctype='multipart/form-data'>
-			FileSystem:<br>
-			<input type='file' accept='.bin,.bin.gz' name='filesystem'>
-			<input type='submit' value='Update FileSystem'>
-		</form>
-	</body>
-	</html>)";
-static const char successResponse[] PROGMEM =
-	"<META http-equiv=\"refresh\" content=\"15;URL=/\">Update Success! Rebooting...";
 
 void AsyncHTTPUpdateServer::_setUpdaterError()
 {
@@ -71,7 +49,7 @@ void AsyncHTTPUpdateServer::setup(AsyncWebServer *server, const String &path, co
 		{
 			if (_username != emptyString && _password != emptyString && !request->authenticate(_username.c_str(), _password.c_str()))
 				return request->requestAuthentication();
-			request->send_P(200, PSTR("text/html"), serverIndex);
+			request->send(LittleFS, F("/update.html"), String());
 		});
 
 	// handler for the /update form POST (once file upload finishes)
@@ -87,7 +65,7 @@ void AsyncHTTPUpdateServer::setup(AsyncWebServer *server, const String &path, co
 			else
 			{
 				request->client()->setNoDelay(true);
-				request->send_P(200, PSTR("text/html"), successResponse);
+				request->send(LittleFS, F("/update_success.html"), String());
 				request->client()->stop();
 
 				_shouldreboot = true;
